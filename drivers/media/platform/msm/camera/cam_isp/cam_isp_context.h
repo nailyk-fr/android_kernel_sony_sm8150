@@ -100,6 +100,7 @@ struct cam_isp_ctx_irq_ops {
  * @bubble_report:         Flag to track if bubble report is active on
  *                         current request
  * @hw_update_data:        HW update data for this request
+ * @bubble_detected:       Flag to indicate if bubble detected
  *
  */
 struct cam_isp_ctx_req {
@@ -115,6 +116,7 @@ struct cam_isp_ctx_req {
 	uint32_t                              num_acked;
 	int32_t                               bubble_report;
 	struct cam_isp_prepare_hw_update_data hw_update_data;
+	bool                                  bubble_detected;
 };
 
 /**
@@ -142,6 +144,8 @@ struct cam_isp_context_state_monitor {
  * @base:                      Common context object pointer
  * @frame_id:                  Frame id tracking for the isp context
  * @substate_actiavted:        Current substate for the activated state.
+ * @process_bubble:            Atomic variable to check if ctx is still
+ *                             processing bubble.
  * @substate_machine:          ISP substate machine for external interface
  * @substate_machine_irq:      ISP substate machine for irq handling
  * @req_base:                  Common request object storage
@@ -165,6 +169,7 @@ struct cam_isp_context {
 
 	int64_t                          frame_id;
 	uint32_t                         substate_activated;
+	atomic_t                         process_bubble;
 	struct cam_ctx_ops              *substate_machine;
 	struct cam_isp_ctx_irq_ops      *substate_machine_irq;
 
